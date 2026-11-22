@@ -69,6 +69,8 @@ tests use a tiny fictional fixture, not an assertion about 2024 real data.
 
 For definitions, assumptions and cautions see [metric definitions](docs/metric_definitions.md).
 
+For initial results from the real 2024 extract, see [Milestone 2 operational findings](docs/milestone_2_findings.md). These identify BTDT Parking Enforcement as a concentrated historical backlog case, while avoiding unsupported causal claims.
+
 ## Repository structure
 
 ```text
@@ -82,4 +84,4 @@ servicepulse-operations/
 └── .github/workflows/ci.yml
 ```
 
-**Status:** Milestone 1 starter. No analysis results or Power BI report have been claimed yet.
+**Status:** Milestone 1 data foundation validated on the real 2024 extract; Milestone 2 bottleneck investigation documented. A Power BI report and process-improvement scenarios are still planned.
