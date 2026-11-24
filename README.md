@@ -1,27 +1,56 @@
-# ServicePulse: Operational Performance & Process Improvement
+# ServicePulse | Operational Performance & Process Improvement
 
-**Real municipal service data | Python · SQLite · SQL · Power BI planned**
+**Python · SQLite · SQL · Power BI | 306,756 Boston 311 service requests**
 
-> How can an operations team identify which service workflows fall behind,
-> determine where delays concentrate, and prioritize investigations without
-> mistaking service-mix differences for performance failures?
+ServicePulse is an end-to-end operational analytics portfolio project that reconstructs the year-end 2024 service backlog, identifies concentrated delays, and translates the findings into practical investigation priorities.
 
-ServicePulse analyzes real, publicly released Boston 311 service requests.
-The initial baseline uses requests opened in **2024**, before the city's
-October 2025 migration to an additional service-management system. The raw
-CSV is downloaded by the user and is **not committed**, since it includes
-street-level locations and free-text fields that are unnecessary for this
-analysis.
+**Historical snapshot:** December 31, 2024, 23:59:59.
 
-This is a **portfolio analysis**, not a City of Boston project or an actual
-process intervention. Published service flags will be evaluated critically.
+[Open the Power BI report](Dashboards/Operations-Dashboard.pbix) · [Detailed analytical findings](docs/milestone_2_findings.md) · [Metric definitions](docs/metric_definitions.md)
 
-## Milestones
+## Executive findings
 
-1. **Foundation (starter implemented):** Download or import official CSV, validate dates and identifiers, load privacy-minimized SQLite table, generate SQL aggregates and a reporting manifest.
-2. **Analyze:** Investigate intake demand, service-level results, category mix, queue performance, backlog and long-tail closure times. Compare similar work types rather than rank departments without adjustment.
-3. **Recommend:** Build an evidence-backed prioritization framework and **labeled what-if scenarios**, not fabricated realized savings.
-4. **Communicate:** Power BI executive, bottleneck and recommendation pages, plus portfolio case study.
+| Metric | Result |
+|---|---:|
+| Requests imported | 306,756 |
+| Closed by snapshot | 247,842 |
+| Open at snapshot | 58,914 |
+| Overdue open requests | 33,348 |
+| On-time share of evaluable closed cases (source flags) | 85.07% |
+
+BTDT accounts for 52.8% of the historical overdue backlog. Its Parking Enforcement service accounts for 14,854 overdue open requests, or 44.5% of the citywide overdue backlog.
+
+## Power BI report
+
+### 1. Executive Overview
+
+The executive page provides the operational baseline and supports prioritization of departments and service categories for further investigation.
+
+![ServicePulse Executive Overview](Dashboards/Screenshots/01_Executive_Oveerview.png)
+
+### 2. Bottleneck Analysis
+
+The focused Parking Enforcement page examines backlog age, queue concentration and recorded target windows.
+
+![ServicePulse Bottleneck Analysis](Dashboards/Screenshots/Scre02_Bottleneck_Analysis.png)
+
+| Parking Enforcement diagnostic | Result |
+|---|---:|
+| Open requests | 14,988 |
+| Overdue open requests | 14,854 |
+| Open backlog aged at least 30 days | 83.5% |
+| Overdue open requests in primary queue | 99.7% |
+| Requests with recorded target windows of 1–7 days | 99.2% |
+
+**Management recommendation:** Review case-closure procedures, target-setting policies and queue monitoring before recommending staffing or workflow changes. The observed concentration identifies an investigation priority, not a proven root cause.
+
+## Technical approach
+
+Official CSV → Python validation and privacy-minimized ingestion → SQLite and SQL reporting views → diagnostic aggregates → Power BI.
+
+The project demonstrates historical snapshot reconstruction, data validation, denominator-aware KPI design, SQL aggregation, operational diagnostics and evidence-based communication.
+
+This is an independent portfolio analysis, not a City of Boston project or an implemented process intervention. The raw CSV is not committed because street-level locations and free-text fields are unnecessary for the analysis.
 
 ## Data source
 
@@ -55,8 +84,20 @@ This will create:
 - `build/reporting/v_open_backlog.csv`: individual open cases and age at snapshot (public case IDs only).
 - `build/reporting/reporting_manifest.json`: source SHA-256, exclusions, reconciliation and metric caveats.
 
-**All reported findings must be calculated from the downloaded source.** The
+**Reproduction note:** the published findings refer to the documented source extract. A later source revision may yield different results. The
 tests use a tiny fictional fixture, not an assertion about 2024 real data.
+
+## Reproduce the bottleneck investigation
+
+After generating the reporting tables, run:
+
+```bash
+python scripts/analyze_bottlenecks.py
+python scripts/diagnose_service.py
+python scripts/audit_service_targets.py
+```
+
+Diagnostic aggregates are generated in `build/analysis`. Open the committed PBIX in Power BI Desktop; if refreshing locally, update source paths to your generated reporting and diagnostic files as needed. The raw CSV, SQLite database and case-level exports should remain local.
 
 ## Main analytical decisions
 
@@ -80,8 +121,9 @@ servicepulse-operations/
 ├── sql/reporting_views.sql  # Four reporting views + snapshot case view
 ├── scripts/download_data.py # Optional official CSV downloader
 ├── tests/                   # Regression tests using a small fictional fixture
-├── docs/metric_definitions.md
+├── Dashboards/              # Power BI report and screenshots
+├── docs/                     # Metric definitions and detailed findings
 └── .github/workflows/ci.yml
 ```
 
-**Status:** Milestone 1 data foundation validated on the real 2024 extract; Milestone 2 bottleneck investigation documented. A Power BI report and process-improvement scenarios are still planned.
+**Status:** Portfolio release complete: data pipeline, documented operational analysis and two-page Power BI report. Future extensions could include monthly cohort diagnostics and explicitly hypothetical improvement scenarios; no realized savings or causal effects are claimed.
